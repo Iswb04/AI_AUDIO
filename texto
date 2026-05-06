@@ -1,0 +1,28 @@
+"""
+
+Voz → texto → Whisper
+Texto → resposta → Ollama
+(opcional) resposta → voz → pyttsx3
+
+você fala → (speech-to-text) → texto → Ollama → resposta → (opcional: voz)
+
+
+PC (IA - Ollama)
+   ↓ resposta (texto ou áudio)
+Bluetooth
+   ↓
+STM32
+   ↓
+DAC / I2S
+   ↓
+alto-falante
+
+
+
+
+Ajustar velocidade: engine.setProperty('rate', 150)  # padrão ~200
+Ajustar volume: engine.setProperty('volume', 1.0)  # 0.0 a 1.0
+
+
+
+"""
