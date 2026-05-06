@@ -19,7 +19,6 @@ alto-falante
 
 
 
-
 Ajustar velocidade: engine.setProperty('rate', 150)  # padrão ~200
 Ajustar volume: engine.setProperty('volume', 1.0)  # 0.0 a 1.0
 
@@ -29,15 +28,16 @@ pip install requests pyttsx3 SpeechRecognition pyaudio
 
 
 
-| Modelo    | Velocidade   | Inteligência | Melhor pra       |
-| --------- | ------------ | ------------ | ---------------- |
-| Llama 3   | Médio        | ⭐⭐⭐⭐         | Assistente geral |
-| Mistral   | Muito rápido | ⭐⭐⭐          | Bot leve         |
-| Phi-3     | MUITO rápido | ⭐⭐           | PC fraco         |
-| Qwen      | Médio        | ⭐⭐⭐⭐         | Código + API     |
-| Mixtral   | Lento        | ⭐⭐⭐⭐⭐        | IA forte local   |
-| CodeLlama | Médio        | ⭐⭐⭐          | Programação      |
-| Llama 2   | Médio        | ⭐⭐           | legado           |
+| Modelo             | Velocidade   | Inteligência | Melhor pra          | RAM      |
+| ------------------ | ------------ | ------------ | ------------------- | -------- |
+| **Llama 3 (8B)**   | Média        | 4/5          | Assistente geral    | 8–12 GB  |
+| **Mistral (7B)**   | Muito rápido | 3/5          | Bot leve            | 6–8 GB   |
+| **Phi-3**          | MUITO rápido | 2/5          | PC fraco / básico   | 4–6 GB   |
+| **Qwen 2.5 (7B)**  | Média        | 4/5          | Código + lógica     | 8–12 GB  |
+| **Mixtral (8x7B)** | Lento        | 5/5          | IA forte (tipo GPT) | 32–64 GB |
+| **CodeLlama (7B)** | Média        | 3/5          | Programação         | ~8 GB    |
+| **Llama 2 (7B)**   | Média        | 2/5          | básico / antigo     | 6–8 GB   |
+
 
 
 para instalar modelo: ollama pull "nome_do_modelo
