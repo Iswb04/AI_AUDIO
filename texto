@@ -23,6 +23,22 @@ alto-falante
 Ajustar velocidade: engine.setProperty('rate', 150)  # padrão ~200
 Ajustar volume: engine.setProperty('volume', 1.0)  # 0.0 a 1.0
 
+py -3.12 -m venv venv
+venv\Scripts\activate
+pip install requests pyttsx3 SpeechRecognition pyaudio
 
 
+
+| Modelo    | Velocidade   | Inteligência | Melhor pra       |
+| --------- | ------------ | ------------ | ---------------- |
+| Llama 3   | Médio        | ⭐⭐⭐⭐         | Assistente geral |
+| Mistral   | Muito rápido | ⭐⭐⭐          | Bot leve         |
+| Phi-3     | MUITO rápido | ⭐⭐           | PC fraco         |
+| Qwen      | Médio        | ⭐⭐⭐⭐         | Código + API     |
+| Mixtral   | Lento        | ⭐⭐⭐⭐⭐        | IA forte local   |
+| CodeLlama | Médio        | ⭐⭐⭐          | Programação      |
+| Llama 2   | Médio        | ⭐⭐           | legado           |
+
+
+para instalar modelo: ollama pull "nome_do_modelo
 """

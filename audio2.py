@@ -12,33 +12,51 @@ def falar(texto):
 
 def ouvir():
     r = sr.Recognizer()
+    r.dynamic_energy_threshold = True
+    r.pause_threshold = 0.8
 
     with sr.Microphone() as source:
-        print("Fale algo...")
-        r.adjust_for_ambient_noise(source)
-        audio = r.listen(source)
+        r.adjust_for_ambient_noise(source, duration=1)
+
+        print("Aguardando fala...")
+
+        try:
+            audio = r.listen(source, timeout=10, phrase_time_limit=15)
+        except sr.WaitTimeoutError:
+            falar("Nenhum som detectado. Encerrando programa.")
+            return "EXIT"
 
     try:
+        print("Processando áudio...")
         texto = r.recognize_google(audio, language="pt-BR")
         print("Você:", texto)
         return texto
-    except:
-        print("Não entendi...")
+
+    except sr.UnknownValueError:
+        falar("Não consegui entender o áudio.")
         return None
+
+    except sr.RequestError:
+        falar("Erro no serviço de reconhecimento.")
+        return None
+
 
 while True:
     user = ouvir()
 
+    if user == "EXIT":
+        break
+
     if not user:
         continue
 
-    if user.lower() in ["sair", "exit", "quit"]:
+    if user.lower() in ["sair", "exit", "quit", "finalizar", "encerrar"]:
         break
 
     prompt = f"""
     Regras:
-    - Fale sempre em português
-    - Fale no máximo um parágrafo
+    - Fale sempre em português.
+    - Fale o minimo possivel para responder.
 
     Usuário: {user}
     Resposta:
@@ -47,14 +65,16 @@ while True:
     response = requests.post(
         "http://localhost:11434/api/generate",
         json={
-            "model": "llama3",
+            "model": "llama3.2:latest",
             "prompt": prompt,
-            "stream": False
+            "stream": False,
+            "options": {
+                "temperature": 0.7
+            }
         }
     )
 
     resposta = response.json()["response"].strip()
 
     time.sleep(0.3)
-
     falar(resposta)
