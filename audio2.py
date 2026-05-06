@@ -3,12 +3,16 @@ import pyttsx3
 import time
 import speech_recognition as sr
 
+
+
 def falar(texto):
     print("IA:", texto)
     engine = pyttsx3.init()
     engine.setProperty('rate', 220)
+    engine.stop()
     engine.say(texto)
     engine.runAndWait()
+
 
 def ouvir():
     r = sr.Recognizer()
