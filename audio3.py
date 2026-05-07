@@ -5,6 +5,9 @@ import os
 import pyautogui
 import tkinter as tk
 import threading
+from datetime import datetime
+
+agora = datetime.now()
 
 # config visual - tkinter
 def iniciar_tk():
@@ -14,6 +17,7 @@ def iniciar_tk():
     janela.geometry("50x50+0+0")
     janela.attributes("-topmost", True)
     janela.mainloop()
+    
 
 def mudar_cor(cor):
     global janela
@@ -67,6 +71,9 @@ def ouvir():
 # comandos locais
 def executar_comando_local(texto):
     texto = texto.lower()
+
+    if "que horas são" in texto:
+        return f"são {agora.hour} e {agora.minute}"
 
     if "abrir chrome" in texto:
         os.system("start chrome.exe")
