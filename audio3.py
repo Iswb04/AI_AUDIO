@@ -5,21 +5,6 @@ import speech_recognition as sr
 import os
 import pyautogui
 
-wake_word = "olá teste"
-estado = "sleep"
-
-print("programa iniciado.")
-
-r = sr.Recognizer()
-r.dynamic_energy_threshold = True
-r.pause_threshold = 2.5
-mic = sr.Microphone()
-
-# calibração
-with mic as source:
-    r.adjust_for_ambient_noise(source, duration=1)
-
-
 def falar(texto):
     print("IA:", texto)
     engine = pyttsx3.init()
@@ -27,102 +12,84 @@ def falar(texto):
     engine.say(texto)
     engine.runAndWait()
 
-
 def ouvir():
-    with mic as source:
+    r = sr.Recognizer()
+    r.dynamic_energy_threshold = False # corta ruido
+    r.pause_threshold = 3.0 # tempo de silencio
+    r.phrase_time_limit = 30 # tempo de fala total
+
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source, duration=1)
+        print("Ouvindo...")
         try:
-            audio = r.listen(source, timeout=10, phrase_time_limit=15)
-        except sr.WaitTimeoutError:
+            audio = r.listen(source, timeout=None, phrase_time_limit=10)
+        except Exception:
             return None
 
     try:
-        return r.recognize_google(audio, language="pt-BR")
+        print("Processando áudio...")
+        texto = r.recognize_google(audio, language="pt-BR")
+        print("Você disse:", texto)
+        return texto
     except:
         return None
 
-
 def executar_comando_local(texto):
     texto = texto.lower()
-
     if "abrir chrome" in texto:
         os.system("start chrome.exe")
         return "Abrindo Chrome"
-
     if "abrir steam" in texto:
         os.startfile(r"C:\Program Files (x86)\Steam\steam.exe")
         return "Abrindo Steam"
-
     if "fechar chrome" in texto:
         pyautogui.hotkey("ctrl", "w")
         return "Chrome fechado"
-
     if "fechar steam" in texto:
         os.system("taskkill /IM steam.exe /F")
         return "Fechando Steam"
-
     return None
 
+WAKE_WORD = "python"
 
-def modo_assistente():
-    global estado
+while True:
+    user_input = ouvir()
 
-    falar("Sim?")
+    if not user_input:
+        continue
 
-    while estado == "active":
-        comando = ouvir()
-        if not comando:
+    frase_min = user_input.lower()
+
+    if frase_min.startswith(WAKE_WORD):
+        comando_limpo = frase_min.replace(WAKE_WORD, "").strip()
+        
+        if not comando_limpo:
+            falar("Sim? Estou ouvindo.")
             continue
 
-        comando = comando.lower()
-
-        # trascrição de audio
-        print("Você:", comando)
-
-        # voltar pro sleep
-        if comando in ["parar", "voltar", "desligar"]:
-            estado = "sleep"
-            falar("Ok")
+        if comando_limpo in ["sair", "exit", "quit", "finalizar", "encerrar"]:
+            falar("Desligando.")
             break
 
-        resultado = executar_comando_local(comando)
-        if resultado:
-            falar(resultado)
-            continue
+        comando_executado = executar_comando_local(comando_limpo)
 
-        prompt = f"""
-Responda em português com apenas uma frase.
-
-Usuário: {comando}
-Resposta:
-"""
-
-        try:
-            response = requests.post(
-                "http://localhost:11434/api/generate",
-                json={
-                    "model": "llama3.2:latest",
-                    "prompt": prompt,
-                    "stream": False,
-                    "options": {"temperature": 0.7}
-                }
-            )
-
-            resposta = response.json()["response"].strip()
-
-            falar(resposta)
-
-        except:
-            falar("Erro na IA.")
-
-
-# WAKE WORD
-while True:
-
-    if estado == "sleep":
-        texto = ouvir()
-
-        if texto and wake_word in texto.lower():
-            estado = "active"
-            modo_assistente()
-
-    time.sleep(0.2)
+        if comando_executado:
+            falar(comando_executado)
+        else:
+            prompt = f"Fale sempre em português. Responda com no máximo uma frase.\nUsuário: {comando_limpo}\nResposta:"
+            
+            try:
+                response = requests.post(
+                    "http://localhost:11434/api/generate",
+                    json={
+                        "model": "llama3.2:latest",
+                        "prompt": prompt,
+                        "stream": False,
+                    }
+                )
+                resposta_ai = response.json()["response"].strip()
+                falar(resposta_ai)
+            except Exception as e:
+                falar("Erro ao conectar com o Ollama.")
+    else:
+        print(f"Ignorando: '{frase_min}'")
