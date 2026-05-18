@@ -1,0 +1,19 @@
+Recomendações de Formatos de Imagem para Robô (128x64)
+
+Para um robô utilizando STM32 e uma tela OLED de 128x64, a escolha do formato depende de onde você está rodando o código:
+
+1. FASE DE PROTOTIPAGEM (Python / PC):
+   - PNG: Melhor formato. Suporta transparência e é fácil de redimensionar.
+   - GIF: Excelente se você já tiver a animação de piscar pronta, pois o Python (com PIL/Pillow) consegue extrair os quadros facilmente.
+
+2. FASE FINAL (STM32 / Embarcado):
+   - C ARRAYS (.h / .c): Este é o "formato" real que o microcontrolador entende. Você converte a imagem em um array de bytes (hexadecimal) onde cada bit representa um pixel (ligado/desligado).
+   - XBM (X BitMap): É um formato de imagem que já é salvo como código C. Muitas bibliotecas de display (como U8g2) aceitam esse formato nativamente.
+   - BMP (Monochrome): Pode ser usado, mas ocupa mais espaço e exige um "parser" no STM32. É mais comum converter BMP -> C Array antes de compilar.
+
+3. DICAS TÉCNICAS:
+   - Resolução: Mantenha exatamente 128x64 para evitar distorções.
+   - Cor: Como a maioria dessas telas é monocromática (ou duas cores fixas), use imagens em Preto e Branco puro (1-bit) para evitar que o conversor borre os detalhes.
+   - Ferramenta recomendada: "LCD Assistant" ou "image2cpp" (web) para converter suas imagens PNG/BMP em arrays de código C.
+
+Resumo: Me mande em PNG ou GIF para eu processar aqui no protótipo, mas saiba que para o STM32 vamos converter tudo para Arrays de Bytes (C Code).
